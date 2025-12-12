@@ -2,7 +2,7 @@
 
 Name:		liquidctl
 Version:	1.14.0
-Release:	2
+Release:	3
 Source0:	https://files.pythonhosted.org/packages/source/l/%{name}/%{name}-%{version}.tar.gz
 Summary:	Cross-platform tool and drivers for liquid coolers and other devices
 URL:		https://github.com/liquidctl/liquidctl
