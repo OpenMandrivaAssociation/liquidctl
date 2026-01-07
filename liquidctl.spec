@@ -1,8 +1,8 @@
-%bcond_with test
+%bcond tests 1
 
 Name:		liquidctl
-Version:	1.14.0
-Release:	3
+Version:	1.15.0
+Release:	1
 Source0:	https://files.pythonhosted.org/packages/source/l/%{name}/%{name}-%{version}.tar.gz
 Summary:	Cross-platform tool and drivers for liquid coolers and other devices
 URL:		https://github.com/liquidctl/liquidctl
@@ -13,6 +13,7 @@ BuildSystem:	python
 BuildArch:	noarch
 
 BuildRequires:	python
+BuildRequires:	python%{pyver}dist(pip)
 BuildRequires:	python%{pyver}dist(setuptools)
 BuildRequires:	python%{pyver}dist(setuptools-scm)
 BuildRequires:	python%{pyver}dist(wheel)
@@ -32,7 +33,7 @@ BuildRequires:	python%{pyver}dist(docopt)
 BuildRequires:	python%{pyver}dist(hidapi)
 BuildRequires:	python%{pyver}dist(pillow)
 BuildRequires:	python%{pyver}dist(smbus)
-BuildRequires:	pyusb
+BuildRequires:	python%{pyver}dist(pyusb)
 
 # Require the python and udev packages with the main package
 Requires: python-%{name} = %{version}-%{release}
@@ -49,7 +50,6 @@ https://github.com/liquidctl/liquidctl#supported-devices
 ##########################
 %package -n python-%{name}
 Summary: Module for controlling liquid coolers, case fans and RGB LED devices
-Requires:	lib64usb1.0_0
 Requires:	python >= 3.9
 Requires:	python%{pyver}dist(colorlog)
 Requires:	python%{pyver}dist(crcmod)
@@ -57,7 +57,7 @@ Requires:	python%{pyver}dist(docopt)
 Requires:	python%{pyver}dist(hidapi)
 Requires:	python%{pyver}dist(pillow)
 Requires:	python%{pyver}dist(smbus)
-Requires:	pyusb
+Requires:	python%{pyver}dist(pyusb)
 
 Suggests:	%{name}-udev = %{version}-%{release}
 Suggests:	%{name}-doc = %{version}-%{release}
@@ -78,9 +78,9 @@ https://github.com/liquidctl/liquidctl#supported-devices
 Summary: Unprivileged device access rules for %{name}
 Requires: %{name} = %{version}-%{release}
 
-Suggests:	%{name}
-Suggests:	python-%{name}
-Suggests:	%{name}-doc
+Suggests:	%{name} = %{version}-%{release}
+Suggests:	python-%{name} = %{version}-%{release}
+Suggests:	%{name}-doc = %{version}-%{release}
 
 %description udev
 
@@ -92,29 +92,33 @@ when ran by an unprivileged user.
 %package doc
 Summary: Documentation for %{name}
 
-Suggests:	%{name}
-Suggests:	python-%{name}
-Suggests:	%{name}-udev
+Suggests:	%{name} = %{version}-%{release}
+Suggests:	python-%{name} = %{version}-%{release}
+Suggests:	%{name}-udev = %{version}-%{release}
 
 %description doc
 This package contains documentation for %{name}.
 
 
 ##########################
-%global setuptools_ver %{gsub %{version} %W -}
+#global setuptools_ver %{gsub %{version} %W -}
 
 %prep
 %autosetup -p1 -n liquidctl-%{version}
+# Remove bundled egg-info
+rm -rf %{name}.egg-info/
+
 mkdir -p ./build/man/man8
 cp README.md ./build
 cp LICENSE.txt ./build
 cp liquidctl.8 ./build/man/man8
 
 %build
+export SETUPTOOLS_SCM_PRETEND_VERSION=%{version}
 %py_build
 
 %install
-%py3_install
+%py_install
 install -dpm 0755 %{buildroot}%{_docdir}/%{name}
 install -dpm 0755 %{buildroot}%{_mandir}/man8
 
@@ -126,10 +130,11 @@ install -Dpm 644 extra/linux/71-%{name}.rules %{buildroot}%{_udevrulesdir}/71-%{
 install -Dpm 644 -t %{buildroot}%{_docdir}/%{name} CHANGELOG.md README.md LICENSE.txt
 cp -a docs/ %{buildroot}%{_docdir}/%{name}
 
-# tests run locally, disabled for abf.
-%if %{with test}
+%if %{with tests}
 %check
-%{__python} -m pytest tests/
+export CI=true
+export PYTHONPATH="%{buildroot}%{python_sitelib}:${PWD}"
+pytest tests/
 %endif
 
 %files
@@ -139,13 +144,9 @@ cp -a docs/ %{buildroot}%{_docdir}/%{name}
 %{_datadir}/bash-completion/completions/%{name}
 
 %files -n python-%{name}
-%{python3_sitelib}/%{name}-*.dist-info
-%{python3_sitelib}/%{name}/*.py
-%{python3_sitelib}/%{name}/__pycache__/*.cpython-3*.pyc
-%{python3_sitelib}/%{name}/driver/*.py
-%{python3_sitelib}/%{name}/driver/__pycache__/*.cpython-3*.pyc
-
 %license LICENSE.txt
+%{python_sitelib}/%{name}
+%{python_sitelib}/%{name}-%{version}.dist-info
 
 %files udev
 %{_udevrulesdir}/71-%{name}.rules
