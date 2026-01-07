@@ -1,4 +1,5 @@
-%bcond tests 1
+# disable tests on ABF, pass locally
+%bcond tests 0
 
 Name:		liquidctl
 Version:	1.15.0
