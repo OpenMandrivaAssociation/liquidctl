@@ -122,8 +122,8 @@ export SETUPTOOLS_SCM_PRETEND_VERSION=%{version}
 install -dpm 0755 %{buildroot}%{_docdir}/%{name}
 install -dpm 0755 %{buildroot}%{_mandir}/man8
 
-zstd -r --rm %_vpath_builddir/man/man8
-mv %_vpath_builddir/man/man8 %{buildroot}%{_mandir}
+zstd -r --rm build/man/man8
+mv build/man/man8 %{buildroot}%{_mandir}
 
 install -Dpm 644 extra/completions/liquidctl.bash %{buildroot}%{_datadir}/bash-completion/completions/%{name}
 install -Dpm 644 extra/linux/71-%{name}.rules %{buildroot}%{_udevrulesdir}/71-%{name}.rules
