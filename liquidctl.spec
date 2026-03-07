@@ -2,7 +2,7 @@
 %bcond tests 0
 
 Name:		liquidctl
-Version:	1.15.0
+Version:	1.16.0
 Release:	1
 Source0:	https://files.pythonhosted.org/packages/source/l/%{name}/%{name}-%{version}.tar.gz
 Summary:	Cross-platform tool and drivers for liquid coolers and other devices
@@ -88,7 +88,6 @@ Suggests:	%{name}-doc = %{version}-%{release}
 This package contains udev rules allowing %{name} access to cooling devices
 when ran by an unprivileged user.
 
-
 ##########################
 %package doc
 Summary: Documentation for %{name}
@@ -100,9 +99,7 @@ Suggests:	%{name}-udev = %{version}-%{release}
 %description doc
 This package contains documentation for %{name}.
 
-
 ##########################
-#global setuptools_ver %{gsub %{version} %W -}
 
 %prep
 %autosetup -p1 -n liquidctl-%{version}
