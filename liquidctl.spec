@@ -3,7 +3,7 @@
 
 Name:		liquidctl
 Version:	1.16.0
-Release:	1
+Release:	2
 Source0:	https://files.pythonhosted.org/packages/source/l/%{name}/%{name}-%{version}.tar.gz
 Summary:	Cross-platform tool and drivers for liquid coolers and other devices
 URL:		https://github.com/liquidctl/liquidctl
@@ -19,7 +19,7 @@ BuildRequires:	python%{pyver}dist(setuptools)
 BuildRequires:	python%{pyver}dist(setuptools-scm)
 BuildRequires:	python%{pyver}dist(wheel)
 BuildRequires:	systemd-rpm-macros
-# for tests
+%if %{with tests}
 BuildRequires:	python%{pyver}dist(pytest)
 BuildRequires:	python%{pyver}dist(pluggy)
 BuildRequires:	python%{pyver}dist(hypothesis)
@@ -28,13 +28,7 @@ BuildRequires:	python%{pyver}dist(pytest-randomly)
 BuildRequires:	python%{pyver}dist(pytest-forked)
 BuildRequires:	python%{pyver}dist(pytest-flake8)
 BuildRequires:	python%{pyver}dist(pytest-mock)
-BuildRequires:	python%{pyver}dist(colorlog)
-BuildRequires:	python%{pyver}dist(crcmod)
-BuildRequires:	python%{pyver}dist(docopt)
-BuildRequires:	python%{pyver}dist(hidapi)
-BuildRequires:	python%{pyver}dist(pillow)
-BuildRequires:	python%{pyver}dist(smbus)
-BuildRequires:	python%{pyver}dist(pyusb)
+%endif
 
 # Require the python and udev packages with the main package
 Requires: python-%{name} = %{version}-%{release}
